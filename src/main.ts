@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
+// session
+import * as session from 'express-session';
+
 // 配置静态资源服务器
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -10,6 +13,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // session
+  app.use(session({ secret: 'wang', cookie: { maxAage: 24 * 60 * 60 * 1000 } }))
 
   // 配置静态资源服务器
   app.useStaticAssets(

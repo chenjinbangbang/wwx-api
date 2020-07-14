@@ -1,6 +1,16 @@
-import { Controller, Post } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { Controller, Post, Body, Request } from '@nestjs/common';
+import { ApiTags, ApiResponse, ApiOperation, ApiBody, ApiProperty } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { IsString } from 'class-validator';
+
+// 登录实体
+class LoginDto {
+  @ApiProperty({
+    description: '小程序code'
+  })
+  @IsString()
+  readonly code: string;
+}
 
 @ApiTags('登录相关')
 @Controller('auth')
@@ -10,7 +20,8 @@ export class AuthController {
   // 登录
   @Post('login')
   @ApiOperation({ summary: '登录接口' })
-  login() {
-    return this.authService.login();
+  @ApiBody({ type: LoginDto })
+  login(@Request() req, @Body() body) {
+    return this.authService.login(req, body);
   }
 }

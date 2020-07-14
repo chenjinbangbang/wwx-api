@@ -1,3 +1,6 @@
+const request = require('request');
+const querystring = require('querystring');
+
 /**
  * 使用getRawMany()方法时，删除所有原始数据
  * @param list 返回数据
@@ -96,4 +99,39 @@ export function searchParams(data: object, params: string[] = [], extras: string
     }
   }
   return searchData;
+}
+
+
+/**
+ * 
+ * @param url 请求地址
+ * @param method 请求方法
+ * @param data 请求参数
+ */
+export function requestUrl(url = '', method = 'GET', data = {}) {
+  console.log(querystring.stringify(data))
+
+  return new Promise((resolve, reject) => {
+    request.get(url + '?' + querystring.stringify(data), (err, res, body) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(body);
+    })
+    //   request({
+    //     url,
+    //     method,
+    //     json: true,
+    //     headers: {
+    //       'content-type': 'application/json'
+    //     },
+    //     data: JSON.stringify(data)
+    //   }, (err, res, body) => {
+    //       console.log(err, body)
+    //     if (err) {
+    //       reject(err);
+    //     }
+    //     resolve(body);
+    //   })
+  });
 }

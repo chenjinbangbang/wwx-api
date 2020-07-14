@@ -1,13 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { resFormat } from 'src/common/global';
-import { Rerpository, ConnectionManager, Connection } from 'typeorm'
+import { Repository, ConnectionManager, Connection, getConnection } from 'typeorm'
 
 @Injectable()
 export class WangService {
+  constructor(private readonly connection: Connection) { }
 
   // 获取王者荣耀题目列表
-  async getQuestionList() {
-    // let list = await 
-    return resFormat(true, 'xxx', null);
+  async getQuestionList(data) {
+    console.log(data)
+    let { question } = data
+
+    let res = await getConnection().query(`select id, title, content, option1, option2, option3, option4, answer from wang_question_bank where id = ${question}`);
+    
+    // let res = await getConnection().createQueryBuilder()
+    //   .select(['id', 'title', 'content'])
+    //   .getOne()
+      
+
+    // let res = await this.connection.manager.findOne('wang_question_bank', 1)
+    
+    if (res.length > 0) {
+      return resFormat(true, res[0], null);
+    } else { 
+      return resFormat(false, null, '该题目不存在');
+    }
   }
 }
