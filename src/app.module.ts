@@ -8,6 +8,7 @@ import { Connection } from 'typeorm';
 
 // 模块
 import { AuthModule } from './auth/auth.module';
+import { WangModule } from './wang/wang.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { AuthModule } from './auth/auth.module';
         synchronize: true
       }
     ),
-    AuthModule
+    AuthModule,
+    WangModule
   ],
   controllers: [AppController],
   providers: [AppService],
