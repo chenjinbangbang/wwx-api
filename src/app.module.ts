@@ -21,7 +21,7 @@ import { WangModule } from './wang/wang.module';
         username: 'root',
         password: 'panshuling666',
         database: 'wang_new',
-        entities: [__dirname + '/**/**/*.entity.ts,.js'],
+        entities: [__dirname + '/**/**/*.entity{.ts,.js}'],
         synchronize: true
       }
     ),

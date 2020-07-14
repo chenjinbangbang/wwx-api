@@ -15,7 +15,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // session
-  app.use(session({ secret: 'wang', cookie: { maxAage: 24 * 60 * 60 * 1000 } }))
+  app.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: 'wang',
+    cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  }))
 
   // 配置静态资源服务器
   app.useStaticAssets(
@@ -34,6 +39,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document); // 1. Swagger UI的挂载路径。2. 应用程序实例。3. 上面已经实例化的文档对象document
 
-  await app.listen(3000);
+  await app.listen(80);
 }
 bootstrap();
