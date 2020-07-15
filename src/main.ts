@@ -9,6 +9,9 @@ import * as express from 'express'
 // session
 import * as session from 'express-session';
 
+// cookie
+import * as cookieParser from 'cookie-parser';
+
 // 配置静态资源服务器
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -30,12 +33,14 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(server));
 
   // session
-  app.use(session({
-    resave: false,
-    saveUninitialized: true,
-    secret: 'wang',
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }
-  }))
+  // app.use(session({
+  //   // resave: true,
+  //   // saveUninitialized: true,
+  //   secret: 'wang',
+  //   // cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  // }))
+
+  app.use(cookieParser());
 
   // 配置静态资源服务器
   app.useStaticAssets(

@@ -28,7 +28,7 @@ export class AuthService {
       grant_type: 'client_credential'
     };
     let res1: any = await requestUrl('https://developer.toutiao.com/api/apps/token', 'GET', params1);
-    console.log(res1);
+    // console.log(res1);
     let res1Data: any = JSON.parse(res1);
 
     // setUserStorage，以key-value形式上报用户数据到字节跳动的云存储服务
@@ -46,7 +46,12 @@ export class AuthService {
     // req.session.openid = resData.openid
     // console.log(req.session.openid)
 
-    req.session.access_token = 'Baerar ' + res1Data.access_token
+    // req.session.access_token = 'Bearer ' + res1Data.access_token;
+    // console.log('存储token:', req.session.access_token)
+    req.cookie('access_token', res1Data.access_token, {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true
+    });
 
     if (res1Data.access_token) {
       return resFormat(true, res1Data, null);

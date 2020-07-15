@@ -109,7 +109,7 @@ export function searchParams(data: object, params: string[] = [], extras: string
  * @param data 请求参数
  */
 export function requestUrl(url = '', method = 'GET', data = {}) {
-  console.log(querystring.stringify(data))
+  // console.log(querystring.stringify(data))
 
   return new Promise((resolve, reject) => {
 
@@ -130,7 +130,6 @@ export function requestUrl(url = '', method = 'GET', data = {}) {
         },
         data: JSON.stringify(data)
       }, (err, res, body) => {
-        console.log(err, body)
         if (err) {
           reject(err);
         }

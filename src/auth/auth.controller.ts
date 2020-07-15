@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request } from '@nestjs/common';
+import { Controller, Post, Body, Request, Response } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation, ApiBody, ApiProperty } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { IsString } from 'class-validator';
@@ -21,7 +21,8 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: '登录接口' })
   @ApiBody({ type: LoginDto })
-  login(@Request() req, @Body() body) {
+  login(@Request() req, @Response() res, @Body() body) {
+    console.log(req.cookies)
     return this.authService.login(req, body);
   }
 }

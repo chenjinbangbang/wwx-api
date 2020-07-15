@@ -14,8 +14,9 @@ export class WangController {
   @ApiQuery({ name: 'question', description: '题目编号' })
   // @ApiQuery({ name: 'openid', description: 'openid' })
   getQuestionList(@Request() req, @Query() query) {
-    console.log('list ', req.headers)
-    if (req.headers.authorization !== req.session.access_token) {
+    console.log('authorization:', req.headers.authorization)
+    console.log('access_token:', req.cookies)
+    if (req.headers.authorization !== req.cookies.access_token) {
       return resFormat(false, null, '您还未登录或登录已过期，请重新登录')
     }
     return this.wangService.getQuestionList(query);
