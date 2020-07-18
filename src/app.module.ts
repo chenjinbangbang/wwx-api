@@ -9,6 +9,7 @@ import { Connection } from 'typeorm';
 // 模块
 import { AuthModule } from './auth/auth.module';
 import { WangModule } from './wang/wang.module';
+import { WangVoteModule } from './wang-vote/wang-vote.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { WangModule } from './wang/wang.module';
       }
     ),
     AuthModule,
-    WangModule
+    WangModule,
+    WangVoteModule
   ],
   controllers: [AppController],
   providers: [AppService],
