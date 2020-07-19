@@ -1,24 +1,22 @@
-import { Controller, Get, Query, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { WangService } from './wang.service';
 import { resFormat } from 'src/common/global';
+import config from 'src/config';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('王者荣耀接口')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @Controller('wang')
 export class WangController {
   constructor(private readonly wangService: WangService) { }
 
-  // 获取王者荣耀题目列表
+  // 获取某个王者荣耀题目
   @Get('request/list')
-  @ApiOperation({ summary: '获取王者荣耀题目列表' })
+  @ApiOperation({ summary: '获取某个王者荣耀题目' })
   @ApiQuery({ name: 'question', description: '题目编号' })
-  // @ApiQuery({ name: 'openid', description: 'openid' })
-  getQuestionList(@Request() req, @Query() query) {
-    console.log('authorization:', req.headers.authorization)
-    console.log('access_token:', req.cookies)
-    if (req.headers.authorization !== req.cookies.access_token) {
-      return resFormat(false, null, '您还未登录或登录已过期，请重新登录')
-    }
+  getQuestionList(@Query() query) {
     return this.wangService.getQuestionList(query);
   }
 }

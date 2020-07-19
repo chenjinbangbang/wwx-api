@@ -1,23 +1,52 @@
-import { Controller, Get, Request, Post } from '@nestjs/common';
+import { Controller, Get, Request, Post, UseGuards, Body } from '@nestjs/common';
 import { WangVoteService } from './wang-vote.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { UserService } from 'src/user/user.service';
+import { resFormat } from 'src/common/global';
+
+// 响应实体
+import { responseDto } from 'src/common/dto';
+import { VoteDto } from './dto/wang_vote.dto';
+import { getListResDto, getVoteResDto } from './dto/wang_vote_res.dto';
 
 @ApiTags('王者荣耀投票返场')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
+@ApiResponse({ status: 200, description: 'OK' })
+@ApiResponse({ status: 401, description: 'Unauthorized' })
+@ApiResponse({ status: 403, description: 'Forbidden' })
+@ApiResponse({ status: 404, description: 'Not Found' })
 @Controller('wang-vote')
 export class WangVoteController {
-  constructor(private readonly wangVoteService: WangVoteService) { }
+  constructor(
+    private readonly wangVoteService: WangVoteService,
+    private readonly userService: UserService
+  ) { }
 
   // 获取英雄列表
   @Get('list')
   @ApiOperation({ summary: '获取英雄列表' })
+  @ApiResponse({ status: 200, type: getListResDto })
   getList(@Request() req) {
-    return this.wangVoteService.getList(req);
+    return this.wangVoteService.getList();
   }
 
-  // 用户投票
+  // 王者荣耀投票
   @Post('vote')
-  @ApiOperation({ summary: '用户投票' })
-  vote(@Request() req) {
-    return this.wangVoteService.vote(req);
+  @ApiOperation({ summary: '王者荣耀投票' })
+  @ApiBody({ type: VoteDto })
+  @ApiResponse({ status: 200, type: responseDto })
+  vote(@Request() req, @Body() body) {
+    return this.wangVoteService.vote(req.user, body);
+  }
+
+  // 获取某个用户的王者荣耀投票次数
+  @Get('vote/get')
+  @ApiOperation({ summary: '获取某个用户的王者荣耀投票次数' })
+  @ApiResponse({ status: 200, type: getVoteResDto })
+  async getVote(@Request() req) {
+    let user = await this.userService.getUser(req.user.openid);
+    return resFormat(true, user.vote, null);
   }
 }

@@ -1,16 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 // const fs = require('fs');
-import * as fs from 'fs';
-import * as http from 'http';
-import * as https from 'https';
-import * as express from 'express'
+// import * as fs from 'fs';
+// import * as http from 'http';
+// import * as https from 'https';
+// import * as express from 'express'
 
 // session
-import * as session from 'express-session';
+// import * as session from 'express-session';
 
 // cookie
-import * as cookieParser from 'cookie-parser';
+// import * as cookieParser from 'cookie-parser';
 
 // 配置静态资源服务器
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
@@ -34,13 +34,12 @@ async function bootstrap() {
 
   // session
   // app.use(session({
-  //   // resave: true,
+  //   // resave: false,
   //   // saveUninitialized: true,
   //   secret: 'wang',
-  //   // cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  //   cookie: { maxAge: 24 * 60 * 60 * 1000 }
   // }))
-
-  app.use(cookieParser());
+  // app.use(cookieParser());
 
   // 配置静态资源服务器
   app.useStaticAssets(
@@ -50,6 +49,7 @@ async function bootstrap() {
 
   // 配置swagger选项对象
   const options = new DocumentBuilder() // DocumentBuilder有助于构建符合OpenAPI规范的基础文档。
+    .addBearerAuth()
     .setTitle('万微想接口文档')
     .setDescription('万微想接口文档描述')
     .setVersion('1.0.0')

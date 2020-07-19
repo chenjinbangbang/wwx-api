@@ -61,7 +61,7 @@ export function retainOne(data: Array<any> = [], params: string[] = []) {
 
 /**
  * 响应规范
- * @param success 成功失败
+ * @param success 是否成功失败
  * @param data 返回数据
  * @param msg 返回信息
  */

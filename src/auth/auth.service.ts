@@ -1,12 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { requestUrl, resFormat } from 'src/common/global';
+import { InjectRepository } from '@nestjs/typeorm';
 // import crypto from 'crypto';
+// import config from 'src/config';
+
+// jwt签发
+import { JwtService } from '@nestjs/jwt'; // 不要忘记将jwtService提供者注入到AuthService
+import { jwtConstants } from './constants';
+// import { UserService } from 'src/user/user.service';
+// import { User } from 'src/entity/user.entity';
+
+// 加密crypto
+import crypto = require('crypto');
+import { Repository } from 'typeorm';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/entity/user.entity';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
+  ) { }
+  private readonly logger = new Logger(AuthService.name);
 
-  // 登录00
+  // 用户登录
   async login(req, data) {
+    this.logger.log(data, '用户登录')
     let { code } = data;
 
     // code2Session
@@ -48,32 +69,52 @@ export class AuthService {
 
     // req.session.access_token = 'Bearer ' + res1Data.access_token;
     // console.log('存储token:', req.session.access_token)
-    req.cookie('access_token', res1Data.access_token, {
-      maxAge: 1000 * 60 * 60 * 24,
-      httpOnly: true
-    });
+    // req.cookie('access_token', res1Data.access_token, {
+    //   maxAge: 1000 * 60 * 60 * 24,
+    //   httpOnly: true
+    // });
+
+    // config.access_token = res1Data.access_token;
+    // config.openid = resData.openid;
+
+    // 判断该用户是否存在，存在则不处理，否则注册
+    let openid = resData.openid || 'yy';
+    let user = await this.userService.getUser(openid);
+    if (!user) {
+      let params = { openid }
+
+      // 新增用户
+      let userData = this.userRepo.create(params);
+      await this.userRepo.save(userData);
+
+      user = await this.userService.getUser(openid);
+    }
+
+    let access_token = this.jwtService.sign({ openid, access_token: res1Data.access_token, id: user.id })
 
     if (res1Data.access_token) {
-      return resFormat(true, res1Data, null);
+      let newRes = {
+        access_token,
+        expires_in: res1Data.expires_in
+      }
+      return resFormat(true, newRes, null);
     } else {
       return resFormat(false, null, '');
     }
-
-
-    // request({
-    //   url: 'https://developer.toutiao.com/api/apps/jscode2session',
-    //   method: 'GET',
-    //   json: true,
-    //   headers: {
-    //     'content-type': 'application/json'
-    //   },
-    //   data: params
-    // }, (err, res, body) => {
-    //   console.log('请求成功', body)
-    //   if (err) {
-    //     return '登录失败：' + err;
-    //   }
-    //   return res;
-    // })
   }
+
+  // 验证用户，先在数据库查找该用户， 然后把result放到token信息里面，在local.strategy.ts执行
+  async validateUser(openid: string): Promise<any> {
+    console.log('验证用户，先在数据库查找该用户， 然后把result放到token信息里面，在local.strategy.ts执行')
+    const user = await this.userService.getUser(openid);
+
+    if (user) {
+      // 更新登录时间
+      // await this.userRepo.update(user.id, { last_login_time: new Date() })
+
+      return user;
+    }
+    return null;
+  }
+
 }
