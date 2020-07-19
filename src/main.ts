@@ -43,7 +43,7 @@ async function bootstrap() {
 
   // 配置静态资源服务器
   app.useStaticAssets(
-    join(__dirname, '..', 'uploads'),
+    join(__dirname, '..', 'static'),
     { prefix: '/static/' } // 配置虚拟路径
   )
 
