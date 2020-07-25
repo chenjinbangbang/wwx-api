@@ -21,6 +21,10 @@ export class getListResDto extends responseDto {
           type: 'string',
           description: '英雄头像'
         },
+        imgUrlActive: {
+          type: 'string',
+          description: '英雄头像选中'
+        },
         votes: {
           type: 'number',
           description: '英雄投票数'
@@ -38,7 +42,11 @@ export class getVoteResDto extends responseDto {
     properties: {
       vote: {
         type: 'number',
-        description: '返回投票次数',
+        description: '用户投票次数',
+      },
+      voteNum: {
+        type: 'number',
+        description: '用户可投票的次数',
       }
     }
   })

@@ -41,12 +41,20 @@ export class WangVoteController {
     return this.wangVoteService.vote(req.user, body);
   }
 
-  // 获取某个用户的王者荣耀投票次数
+  // 增加用户最多可投票的次数
+  @Post('vote/add')
+  @ApiOperation({ summary: '增加用户最多可投票的次数' })
+  @ApiResponse({ status: 200, type: responseDto })
+  voteAlter(@Request() req) {
+    return this.wangVoteService.voteAlter(req.user);
+  }
+
+  // 获取某个用户的王者荣耀投票次数和可投票的次数
   @Get('vote/get')
-  @ApiOperation({ summary: '获取某个用户的王者荣耀投票次数' })
+  @ApiOperation({ summary: '获取某个用户的王者荣耀投票次数和可投票的次数' })
   @ApiResponse({ status: 200, type: getVoteResDto })
   async getVote(@Request() req) {
     let user = await this.userService.getUser(req.user.openid);
-    return resFormat(true, user.vote, null);
+    return resFormat(true, { vote: user.vote, voteNum: user.voteNum }, null);
   }
 }

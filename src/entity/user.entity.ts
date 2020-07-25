@@ -27,8 +27,11 @@ export class User extends BaseEntity {
   @Column({ type: 'tinyint', comment: '性别', nullable: true })
   gender: number;
 
-  @Column({ type: 'tinyint', comment: '今天投票次数（每天0点清0）', default: 0 })
+  @Column({ type: 'tinyint', comment: '今天投票次数（每天0点变为0）', default: 0 })
   vote: number;
+
+  @Column({ type: 'tinyint', comment: '今天最多可投票的次数（每天0点变为1）', default: 1 })
+  voteNum: number;
 
   // @CreateDateColumn({ comment: '注册时间' })
   // create_time: Date;

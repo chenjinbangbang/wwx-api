@@ -12,6 +12,9 @@ export class WangVote extends BaseEntity {
   @Column({ type: 'varchar', comment: '英雄头像' })
   imgUrl: string;
 
+  @Column({ type: 'varchar', comment: '英雄头像选中' })
+  imgUrlActive: string;
+
   @Column({ type: 'bigint', comment: '英雄投票数' })
   votes: number;
 }
