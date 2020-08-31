@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { requestUrl, resFormat } from 'src/common/global';
 // import crypto from 'crypto';
+import config from 'src/config';
 
 @Injectable()
 export class AuthService {
 
-  // 登录00
+  private readonly logger = new Logger(AuthService.name);
+
+  // 登录
   async login(req, data) {
     let { code } = data;
 
@@ -19,6 +22,7 @@ export class AuthService {
     };
     let res: any = await requestUrl('https://developer.toutiao.com/api/apps/jscode2session', 'GET', params);
     let resData: any = JSON.parse(res);
+    this.logger.debug(resData);
 
     // getAccessToken
     // {"access_token":"58a6779780e1b4b8325452f2f5a6e2504b3e36c146cf87947895b9cf6dec1dfc91bf13a0f086850ca6bcb7c128d370d710b5ffac2c07e8499b487fcffc4c93b3e89a9e8e4b1d91fc4085be6aac552","expires_in":7200}"
@@ -30,6 +34,7 @@ export class AuthService {
     let res1: any = await requestUrl('https://developer.toutiao.com/api/apps/token', 'GET', params1);
     // console.log(res1);
     let res1Data: any = JSON.parse(res1);
+    this.logger.debug(res1Data);
 
     // setUserStorage，以key-value形式上报用户数据到字节跳动的云存储服务
     // let params2 = {
@@ -48,15 +53,18 @@ export class AuthService {
 
     // req.session.access_token = 'Bearer ' + res1Data.access_token;
     // console.log('存储token:', req.session.access_token)
-    req.cookie('access_token', res1Data.access_token, {
-      maxAge: 1000 * 60 * 60 * 24,
-      httpOnly: true
-    });
+    // req.cookie('access_token', res1Data.access_token, {
+    //   maxAge: 1000 * 60 * 60 * 24,
+    //   httpOnly: true
+    // });
 
-    if (res1Data.access_token) {
+    config.access_token = 'Bearer ' + res1Data.access_token;
+    // this.logger.debug(config.access_token);
+
+    if (!resData.errcode && res1Data.access_token) {
       return resFormat(true, res1Data, null);
     } else {
-      return resFormat(false, null, '');
+      return resFormat(false, null, '登录失败，请重新登录');
     }
 
 

@@ -21,8 +21,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: '登录接口' })
   @ApiBody({ type: LoginDto })
-  login(@Request() req, @Response() res, @Body() body) {
-    console.log(req.cookies)
+  login(@Request() req, @Body() body) {
     return this.authService.login(req, body);
   }
 }

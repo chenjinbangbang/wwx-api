@@ -7,10 +7,10 @@ import * as https from 'https';
 import * as express from 'express'
 
 // session
-import * as session from 'express-session';
+// import * as session from 'express-session';
 
 // cookie
-import * as cookieParser from 'cookie-parser';
+// import * as cookieParser from 'cookie-parser';
 
 // 配置静态资源服务器
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
@@ -40,11 +40,11 @@ async function bootstrap() {
   //   // cookie: { maxAge: 24 * 60 * 60 * 1000 }
   // }))
 
-  app.use(cookieParser());
+  // app.use(cookieParser());
 
   // 配置静态资源服务器
   app.useStaticAssets(
-    join(__dirname, '..', 'uploads'),
+    join(__dirname, '..', 'static'),
     { prefix: '/static/' } // 配置虚拟路径
   )
 
@@ -62,7 +62,7 @@ async function bootstrap() {
   // await app.listen(81);
   await app.init();
 
-  http.createServer(server).listen(80);
+  http.createServer(server).listen(81);
   https.createServer(httpsOptions, server).listen(443);
 }
 bootstrap();
